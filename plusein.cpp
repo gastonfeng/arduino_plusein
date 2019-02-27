@@ -6,27 +6,32 @@ plusein::plusein(uint8 pin, uint32 min, uint32 max)
     this->min = min;
     pinMode(this->pin, INPUT);
     this->last_level = digitalRead(this->pin);
-    this->last_tick = millis();
+    this->last_tick = micros();
+    index=0;
+    sum=0;
 }
 
 void plusein::poll()
 {
     uint8 l = digitalRead(pin);
-    uint32 t = millis();
+    uint32 t = micros();
     if (last_level != l)
     {
         uint32 tick = t - last_tick;
         if (tick > max)
         {
-            period = 0;
         }
         else if (tick < min)
         {
-            period = 0;
         }
         else
         {
-            period += tick;
+            sum-=buf[index];
+            buf[index]=tick;
+            sum+=buf[index];
+            period = sum/(nrs/2);
+            index++;
+            if(index>=nrs)index=0;
         }
         last_level = l;
         last_tick = t;
@@ -36,5 +41,5 @@ float plusein::freq()
 {
     if (period == 0)
         return 0;
-    return 10000 / period;
+    return 1000000 / period;
 }

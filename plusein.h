@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#define nrs 32
 class plusein
 {
   public:
@@ -8,6 +9,6 @@ class plusein
 
   private:
     uint8 pin;
-    uint8 last_level;
-    uint32 last_tick, min, max,period;
+    uint8 last_level,index;
+    uint32 last_tick, min, max,period,buf[nrs],sum;
 };
